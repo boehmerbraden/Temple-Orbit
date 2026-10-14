@@ -9,7 +9,7 @@ const palettes=[
  ['#281b24','#624336','#ffa658','#d7b57a'],
  ['#17152f','#3d3c62','#bd9dff','#d8c0ef']
 ];
-const colors=['#ff5075','#34f1df','#ffcf43','#a78bff','#a0f04f','#ff923f'];
+const colors=['#ff5075','#34f1df','#ffcf43','#a78bff','#a0f04f','#ff923f','#eef4ff'];
 function disk(c,x,y,r,fill,stroke,w=1){c.beginPath();c.arc(x,y,r,0,Math.PI*2);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=w;c.stroke();}}
 function line(c,points,color,width=1){c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.strokeStyle=color;c.lineWidth=width;c.stroke();}
 function glow(c,x,y,r,color){let g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,color);g.addColorStop(1,color.slice(0,7)+'00');disk(c,x,y,r,g);}
@@ -47,5 +47,25 @@ function guardian(c,game,angle,time,kick){let [x,y]=game.cfg.shooter,accent=pale
 }
 function portal(c,game,time){let p=game.path.at(game.path.length),danger=game.pressure||0,magic=palettes[game.level][2],accent=danger>.5?'#ff745d':magic;glow(c,p.x,p.y,60+danger*20,accent+'38');disk(c,p.x,p.y,31,'#112b35','#c2ac78',3);disk(c,p.x,p.y,25,'#04101c','#648e8b',2);c.save();c.translate(p.x,p.y);c.rotate(time*(.4+danger));for(let i=0;i<8;i++){let a=i*Math.PI/4;rune(c,Math.cos(a)*28,Math.sin(a)*28,3,a,accent);c.beginPath();c.arc(0,0,6+i*2,a+time*.3,a+1.2+time*.3);c.strokeStyle=accent+(i%2?'65':'32');c.lineWidth=2;c.stroke();}c.restore();disk(c,p.x,p.y,6,'#030811');if(danger>.5){c.textAlign='center';c.font='bold 9px system-ui';c.fillStyle='#ffc8a0';c.fillText('DANGER',p.x,p.y+46);}}
 function atmosphere(c,game,time,reduced){const accent=palettes[game.level][2];for(let i=0;i<24;i++){let x=(i*137.2+Math.sin(time*.23+i)*12+980)%980,y=(i*53.7+Math.cos(time*.17+i)*8+640)%640;disk(c,x,y,1+Math.sin(time+i)*.35,accent+'55');}if(!reduced){for(let i=0;i<3;i++){let x=(time*5+i*410)%1400-200,y=150+i*180;let fog=c.createRadialGradient(x,y,0,x,y,170);fog.addColorStop(0,accent+'06');fog.addColorStop(1,accent+'00');c.fillStyle=fog;c.fillRect(x-170,y-170,340,340);}}if(game.pressure>.45){c.strokeStyle=`rgba(255,94,65,${(game.pressure-.45)*(.5+.2*Math.sin(time*5))})`;c.lineWidth=6;c.strokeRect(3,3,974,634);}}
-window.OrbitArt={background,marble,guardian,portal,atmosphere,colors};
+// Covered bridges are drawn over the procession. Geometry comes from collision data.
+const coverCache=new WeakMap();
+function covers(c,game,time,reduced){
+ let cached=coverCache.get(game);
+ if(!cached){cached=document.createElement('canvas');cached.width=980;cached.height=640;let g=cached.getContext('2d');
+  for(let tunnel of game.tunnels){
+   const trace=(w,color,offset=0)=>{g.beginPath();let first=true;for(let s=tunnel.start;s<=tunnel.end+5;s+=5){let p=game.path.at(Math.min(s,tunnel.end));first?g.moveTo(p.x,p.y+offset):g.lineTo(p.x,p.y+offset);first=false;}g.strokeStyle=color;g.lineWidth=w;g.lineCap='round';g.lineJoin='round';g.stroke();};
+   trace(66,'#00000066',6);trace(60,'#061822');trace(55,'#b3aa7c');trace(50,'#536960');trace(40,'#324b49');trace(24,'#536d60');
+   for(let s=tunnel.start+10;s<tunnel.end;s+=25){let p=game.path.at(s),t=game.path.tangent(s);g.save();g.translate(p.x,p.y);g.rotate(Math.atan2(t.y,t.x));line(g,[[0,-24],[0,24]],'#172e36',2);line(g,[[2,-22],[2,22]],'#b4b78e44');rune(g,12,0,5,0,'#c9c59488');g.restore();}
+   for(let s of[tunnel.start,tunnel.end]){let p=game.path.at(s),t=game.path.tangent(s);g.save();g.translate(p.x,p.y);g.rotate(Math.atan2(t.y,t.x));g.fillStyle='#1b3338';g.fillRect(-5,-30,10,60);line(g,[[-5,-29],[-5,29]],'#c4b579',2);for(let side of[-1,1])disk(g,0,side*25,3,'#8effdb');g.restore();}
+  }
+  // Direction glyphs make inward and outward routes legible before the wave arrives.
+  for(let s=100;s<game.path.length-100;s+=230){if(game.isCovered(s))continue;let p=game.path.at(s),t=game.path.tangent(s);g.save();g.translate(p.x,p.y);g.rotate(Math.atan2(t.y,t.x));line(g,[[-4,-5],[3,0],[-4,5]],'#dcddaf38',1.3);g.restore();}
+  coverCache.set(game,cached);
+ }
+ c.drawImage(cached,0,0);
+ const entry=game.path.at(0);disk(c,entry.x,entry.y,19,'#163733','#91c8a1',2);rune(c,entry.x,entry.y,10,Math.atan2(game.path.tangent(0).y,game.path.tangent(0).x),'#abf0c5');
+ if(game.bonus){let b=game.bonus,pulse=reduced?1:1+Math.sin(time*4)*.05;c.save();c.translate(b.x,b.y);c.scale(pulse,pulse);glow(c,0,0,37,'#ffca5845');disk(c,0,0,16,'#715025','#fff1ad',2);disk(c,0,0,12,'#edbd57','#ffed94',1);rune(c,0,0,8,0,'#775120');c.beginPath();c.arc(0,0,21,-Math.PI/2,-Math.PI/2+Math.PI*2*b.life/b.maxLife);c.strokeStyle=b.life<2?'#ff9670':'#ffeac0';c.lineWidth=2;c.stroke();c.fillStyle='#fff0ba';c.font='bold 10px system-ui';c.textAlign='center';c.fillText('+'+b.value,0,36);c.restore();}
+}
+
+window.OrbitArt={covers,background,marble,guardian,portal,atmosphere,colors};
 })();
