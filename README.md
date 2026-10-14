@@ -52,7 +52,7 @@ The lightweight Canvas 2D implementation deliberately avoids Phaser/CDN loading 
 
 ## Validation status
 
-42 automated tests pass. Coverage includes every path's curvature/spacing and shooter clearance, insertion on both sides of an impact, continuous collision detection, direct matches, separated groups, three-stage reconnection combos, powers, reverse/slow motion, finite-wave win/loss, sustained firing and spacing invariants across the campaign, control handlers, lives/retries, progression, storage reload, failed storage, and pause handling.
+45 automated tests pass. Coverage includes every path's curvature/spacing and shooter clearance, insertion on both sides of an impact, continuous collision detection, direct matches, separated groups, three-stage reconnection combos, powers, reverse/slow motion, finite-wave win/loss, sustained firing and spacing invariants across the campaign, control handlers, lives/retries, progression, storage reload, failed storage, and pause handling.
 
 A seeded automated player completed all 24 levels through ordinary projectiles and swaps, without removing marbles or overriding ammo. Each level is allowed up to three seeded attempts; temples 10, 21 and 22 needed retries. This is a feasibility check, not a measurement of human difficulty.
 
@@ -89,3 +89,11 @@ Eighteen additional temples extend the campaign into four six-level chapters: Th
 The added stages use distinct inward/outward winding routes and seven marble colors. Base speed rises from 44 to 61, wave length from 116 to 184, and tunnel count from three to five. Color interruptions increase while the starting time budget shrinks smoothly; idle time to defeat decreases across every new temple. All existing shot, match, scoring, power, and life rules are retained.
 
 `EXPANSION` in `src/core.js` contains the new layouts and tuning. Tests cover distinct layouts, board bounds, nonintersecting track arms, increasing challenge, usable coin positions, high-speed shooting/spacing, chapter navigation, save migration, and final-campaign completion. The six atmospheric palettes repeat across the new chapters.
+
+## Atmosphere and replay polish
+
+Each of the six repeating environments now has distinct scenery: jungle trunks, moonlit arches, garden cascades, tidal pools, glowing volcanic fissures, and celestial rings. Scenery is cached behind the track; animated water and embers respect reduced motion.
+
+The chapter selector uses a connected temple trail, completion seals, and locally saved medals. Each winning run earns one medal for clearing, one for a chain of at least three, and one for finishing within `count × 0.85` seconds. The best medal count per temple is retained. Existing scores and unlocks are preserved; old completions do not receive unearned retroactive medals.
+
+Touch aiming shows a reticle and longer short guide; the precision power still supplies the full guide. A second touch cannot replace the active gesture, and pause cancels pending touch shots. Gap/long shots have distinct popups and chimes; music gains tempo and a quiet pulse near danger. Track layouts, scoring, speeds and simulation rules are unchanged in this pass. Automated DOM tests cover medals, reload, chapter navigation and multi-touch cancellation. Actual phone feel, scenery and audio still need device playtesting.
