@@ -1,6 +1,6 @@
 # Temple Orbit
 
-An original ancient-temple marble-shooter adventure. Six handcrafted paths, a rotating stone guardian, matching and reconnecting chains, four relic powers, synthesized music and effects, and local progression. No accounts, servers, external assets, CDNs, analytics, or ChatGPT services are used by the game.
+An original ancient-temple marble-shooter adventure. Twenty-four distinct paths across four chapters, a rotating stone guardian, matching and reconnecting chains, four relic powers, synthesized music and effects, and local progression. No accounts, servers, external assets, CDNs, analytics, or ChatGPT services are used by the game.
 
 ## Play
 
@@ -25,7 +25,7 @@ Long shots earn +100; shots detected passing through an open chain gap earn +250
 2. In repository Settings → Pages, select Deploy from a branch, `main`, `/ (root)`.
 3. Push a commit. GitHub’s Pages workflow publishes the site. The included validation workflow runs the tests and standalone build independently.
 
-Source repository: https://github.com/boehmerbraden/Temple-Orbit. Enable GitHub Pages using the steps above to publish the game.
+Source repository: https://github.com/boehmerbraden/Temple-Orbit. Play at https://boehmerbraden.github.io/Temple-Orbit/.
 
 ### Any static host
 Upload `dist/index.html`, or upload the modular `index.html`, `style.css`, and `src/` folder together. There are no environment variables, API keys, backend requirements, or paid services. The single-file release is also suitable for hosts that accept a dragged-and-dropped folder.
@@ -52,9 +52,9 @@ The lightweight Canvas 2D implementation deliberately avoids Phaser/CDN loading 
 
 ## Validation status
 
-35 automated tests pass. Coverage includes every path's curvature/spacing and shooter clearance, insertion on both sides of an impact, continuous collision detection, direct matches, separated groups, three-stage reconnection combos, powers, reverse/slow motion, finite-wave win/loss, sustained firing and spacing invariants on all six levels, control handlers, lives/retries, progression, storage reload, failed storage, and pause handling.
+42 automated tests pass. Coverage includes every path's curvature/spacing and shooter clearance, insertion on both sides of an impact, continuous collision detection, direct matches, separated groups, three-stage reconnection combos, powers, reverse/slow motion, finite-wave win/loss, sustained firing and spacing invariants across the campaign, control handlers, lives/retries, progression, storage reload, failed storage, and pause handling.
 
-A seeded automated player also completed all six levels through ordinary projectiles and swaps, without removing marbles or overriding ammo. With the faster pacing, completion times ranged from 48.7 to 77.6 simulated seconds. This is a feasibility check, not a measurement of human difficulty.
+A seeded automated player completed all 24 levels through ordinary projectiles and swaps, without removing marbles or overriding ammo. Each level is allowed up to three seeded attempts; temples 10, 21 and 22 needed retries. This is a feasibility check, not a measurement of human difficulty.
 
 The UI tests use a lightweight DOM/Canvas adapter, not a real browser. Visual layout, audible output, touchscreen feel, actual browser storage, and sustained 60 FPS still require real desktop/mobile playtesting. Do not interpret passing automated tests as that final human acceptance pass.
 
@@ -72,12 +72,20 @@ Visual quality, audio mix and actual-device frame rate have not been verified th
 
 ## Structural difficulty update
 
-Six existing temple slots are retained, together with saved unlocks and records. Temples 1–3 keep their path geometry; temples 4–6 use original, non-intersecting spiral layouts. Temple 5 runs from the inner ring outward. Color counts progress **4 → 4 → 5 → 5 → 6 → 7**, with ivory introduced in the finale. Later waves contain more single-color interruptions instead of mostly ready-made pairs.
+The original six temples retain their saved unlocks and records. Temples 1–3 keep their path geometry; temples 4–6 use original, non-intersecting spiral layouts. Temple 5 runs from the inner ring outward. Color counts progress **4 → 4 → 5 → 5 → 6 → 7**, with ivory introduced in temple 6. Later waves contain more single-color interruptions instead of mostly ready-made pairs.
 
 Stone tunnels begin in temple 2. Covered marbles keep moving and reconnecting normally, but cannot be directly hit. Tunnel roofs also physically intercept shots aimed across them. The final approach to every endpoint remains uncovered. Direction glyphs show the route; the precision aiming guide stops at stone.
 
-Optional sun coins begin in temple 2, first appearing after ten seconds. Each lasts seven seconds and awards the number printed below it (**600–1,000 points**, depending on temple). A successful hit consumes the shot. A new coin can appear twelve seconds after collection or expiration. Coins sit away from the track on a statically unobstructed line, but the moving chain can intercept the shot. They grant score only, without adding new powers or currencies.
+Optional sun coins begin in temple 2, first appearing after ten seconds. Each lasts seven seconds and awards the number printed below it (**600–2,800 points**, depending on temple). A successful hit consumes the shot. A new coin can appear twelve seconds after collection or expiration. Coins sit away from the track on a statically unobstructed line, but the moving chain can intercept the shot. They grant score only, without adding new powers or currencies.
 
 Structural tuning lives in `CHALLENGES` beside `LEVELS` in `src/core.js`: initial head distance, probability of a single-color run, and tunnel intervals expressed as fractions of total path length. The previous smooth speed curve is retained. Starting safety distance and idle time to defeat decrease monotonically across the six temples. Wave counts, lives, existing powers, shot/swap controls, base matching scores, and win/loss rules remain intact. Existing best scores are preserved even though difficulty has changed.
 
 Validation covers non-intersecting track arms, curved spacing, covered movement, collision ordering between marbles/stone/coins, coin expiration and pause, white-marble matches, and UI rendering of every temple. The seeded autoplay uses actual projectiles and swaps, accounts for tunnel visibility and blocking, and completes every level without collecting optional coins. Real-device playtesting is still needed to assess human difficulty and visual feel.
+
+## 24-temple campaign expansion
+
+Eighteen additional temples extend the campaign into four six-level chapters: The Awakening, The Lost Temples, The Master Trials, and The Eternal Eclipse. Chapter tabs keep the level selector compact on phones. Completing the former finale unlocks temple 7, including for existing saves with a temple-6 completion record.
+
+The added stages use distinct inward/outward winding routes and seven marble colors. Base speed rises from 44 to 61, wave length from 116 to 184, and tunnel count from three to five. Color interruptions increase while the starting time budget shrinks smoothly; idle time to defeat decreases across every new temple. All existing shot, match, scoring, power, and life rules are retained.
+
+`EXPANSION` in `src/core.js` contains the new layouts and tuning. Tests cover distinct layouts, board bounds, nonintersecting track arms, increasing challenge, usable coin positions, high-speed shooting/spacing, chapter navigation, save migration, and final-campaign completion. The six atmospheric palettes repeat across the new chapters.

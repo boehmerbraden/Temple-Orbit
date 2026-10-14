@@ -12,3 +12,5 @@
 #pause-touch{display:none}@media(max-height:550px) and (orientation:landscape){#pause-touch{display:block;min-height:35px;height:35px;width:35px}}
 
 .level-details{display:block;color:#a6c4ba;font:9px system-ui;margin-top:5px}.level-card{min-height:84px}@media(max-width:700px){.level-details{font-size:8px;margin-top:3px}.level-card{min-height:59px}}@media(max-height:550px) and (orientation:landscape){.level-card{min-height:57px}}
+
+.chapter-nav{display:flex;justify-content:center;gap:8px;margin:12px 0}.chapter-nav button{min-width:44px;min-height:38px}.chapter-nav [aria-pressed=true]{background:#dfc283;color:#152d30;border-color:#ffe5ab}@media(max-width:700px){.chapter-nav{margin:7px 0}.chapter-nav button{min-height:35px}}
