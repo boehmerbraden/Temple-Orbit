@@ -52,9 +52,9 @@ The lightweight Canvas 2D implementation deliberately avoids Phaser/CDN loading 
 
 ## Validation status
 
-45 automated tests pass. Coverage includes every path's curvature/spacing and shooter clearance, insertion on both sides of an impact, continuous collision detection, direct matches, separated groups, three-stage reconnection combos, powers, reverse/slow motion, finite-wave win/loss, sustained firing and spacing invariants across the campaign, control handlers, lives/retries, progression, storage reload, failed storage, and pause handling.
+48 automated tests pass. Coverage includes every path's curvature/spacing and shooter clearance, insertion on both sides of an impact, continuous collision detection, direct matches, separated groups, three-stage reconnection combos, powers, reverse/slow motion, finite-wave win/loss, sustained firing and spacing invariants across the campaign, control handlers, lives/retries, progression, storage reload, failed storage, and pause handling.
 
-A seeded automated player completed all 24 levels through ordinary projectiles and swaps, without removing marbles or overriding ammo. Each level is allowed up to three seeded attempts; temples 10, 21 and 22 needed retries. This is a feasibility check, not a measurement of human difficulty.
+A seeded automated player completed all 24 levels through ordinary projectiles and swaps, without removing marbles or overriding ammo. Each level is allowed up to three seeded attempts; some temples needed retries. This is a feasibility check, not a measurement of human difficulty.
 
 The UI tests use a lightweight DOM/Canvas adapter, not a real browser. Visual layout, audible output, touchscreen feel, actual browser storage, and sustained 60 FPS still require real desktop/mobile playtesting. Do not interpret passing automated tests as that final human acceptance pass.
 
@@ -97,3 +97,11 @@ Each of the six repeating environments now has distinct scenery: jungle trunks, 
 The chapter selector uses a connected temple trail, completion seals, and locally saved medals. Each winning run earns one medal for clearing, one for a chain of at least three, and one for finishing within `count × 0.85` seconds. The best medal count per temple is retained. Existing scores and unlocks are preserved; old completions do not receive unearned retroactive medals.
 
 Touch aiming shows a reticle and longer short guide; the precision power still supplies the full guide. A second touch cannot replace the active gesture, and pause cancels pending touch shots. Gap/long shots have distinct popups and chimes; music gains tempo and a quiet pulse near danger. Track layouts, scoring, speeds and simulation rules are unchanged in this pass. Automated DOM tests cover medals, reload, chapter navigation and multi-touch cancellation. Actual phone feel, scenery and audio still need device playtesting.
+
+## Varied routes and phone playfield
+
+Temples 7, 9, 11, 13, 15, 17 and 19 now follow winding causeways with broad hairpins, alternating directions and offset lanes. They alternate with the spiral routes. The guardian sits below the upper lanes, creating different shooting angles. Coin candidates are configured for the causeways and still checked against track and tunnel geometry. Temple 19 has shorter tunnel spans to keep shooting openings fair. The last five stages retain their previously tested layouts.
+
+The ⛶ button expands the playfield presentation, hiding secondary page chrome while retaining score, lives, swap and pause. It is a layout mode rather than a browser fullscreen request. Safe-area padding, larger chapter controls and bounded toast messages improve phone use. Releasing outside the playfield or losing touch capture cancels the shot. Continue starts a fresh expedition at the highest unlocked temple. Existing records, medals and unlocks remain intact; mid-round saves are not added.
+
+Checks cover curve spacing, separated lanes, shooter clearance, increasing idle pressure, bonus availability, touch cancellation, expanded-layout toggle and saved progression. Automated play checks all 24 temples with ordinary shots and up to three seeds each. Real-device layout and performance remain unverified.
